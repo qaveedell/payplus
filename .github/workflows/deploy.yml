@@ -1,0 +1,34 @@
+name: Deploy to GCS
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to GCS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.GCS_HOST }}
+          username: ${{ secrets.GCS_USER }}
+          key: ${{ secrets.GCS_SSH_KEY }}
+          script: |
+            cd /opt/payplus || (sudo mkdir -p /opt/payplus && sudo chown $USER:$USER /opt/payplus && cd /opt/payplus)
+
+            # Clone or pull
+            if [ -d ".git" ]; then
+              git pull origin main
+            else
+              git clone https://github.com/qaveedell/payplus.git .
+            fi
+
+            # Build and restart
+            docker compose down
+            docker compose build --no-cache
+            docker compose up -d
+
+            echo "Deployed successfully"
