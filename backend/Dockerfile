@@ -1,7 +1,8 @@
 # Build stage
 FROM golang:1.25-alpine AS builder
 
-ENV GOPROXY=https://nexus.pastil.dev/repository/go-proxy/,direct
+ARG GOPROXY=https://proxy.golang.org,direct
+ENV GOPROXY=${GOPROXY}
 
 WORKDIR /app
 

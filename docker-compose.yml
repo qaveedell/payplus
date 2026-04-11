@@ -18,6 +18,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      args:
+        GOPROXY: ${GOPROXY:-https://proxy.golang.org,direct}
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER:-payday}:${POSTGRES_PASSWORD:-payday_secret}@postgres:5432/${POSTGRES_DB:-payday}?sslmode=disable
       JWT_SECRET: ${JWT_SECRET:-payday-prod-secret-change-me}
@@ -36,6 +38,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmjs.org/}
     ports:
       - "${APP_PORT:-3000}:80"
     depends_on:

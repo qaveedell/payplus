@@ -3,8 +3,9 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
+ARG NPM_REGISTRY=https://registry.npmjs.org/
 COPY package.json package-lock.json ./
-RUN npm ci --registry=https://nexus.pastil.dev/repository/npm-proxy/
+RUN npm ci --registry=${NPM_REGISTRY}
 
 COPY . .
 
