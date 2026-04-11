@@ -7,7 +7,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
@@ -21,4 +20,4 @@ jobs:
             git pull origin main
             docker compose build
             docker compose up -d
-            echo "✅ Deployed at $(date)"
+            echo "Deployed at $(date)"
