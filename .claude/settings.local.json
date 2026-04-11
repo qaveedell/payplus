@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(go mod:*)",
+      "Bash(go get:*)",
+      "Bash(npm create:*)",
+      "Bash(brew list:*)",
+      "Bash(brew install:*)",
+      "Bash(npm install:*)",
+      "Bash(go build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)",
+      "Bash(docker compose:*)",
+      "Read(//Applications/**)",
+      "Read(//usr/local/bin/**)",
+      "Bash(open -a Docker)",
+      "Bash(docker info:*)",
+      "Bash(curl -s -X POST http://localhost:8080/api/auth/login -H 'Content-Type: application/json' -d '{\"\"\"\"username\"\"\"\":\"\"\"\"pak\"\"\"\",\"\"\"\"password\"\"\"\":\"\"\"\"pak123\"\"\"\"}')",
+      "Bash(python3 -m json.tool)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(go version:*)",
+      "Bash(curl -s http://localhost/api/health)"
+    ]
+  }
+}

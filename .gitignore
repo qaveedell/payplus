@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+dist/
+
+# Go binary
+backend/server
+*.exe
+
+# Uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+*.sw?
+.DS_Store
+
+# Env
+.env
+*.local
+
+# OS
+Thumbs.db

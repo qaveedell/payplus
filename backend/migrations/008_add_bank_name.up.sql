@@ -1,0 +1,1 @@
+ALTER TABLE payments ADD COLUMN bank_name VARCHAR(100);

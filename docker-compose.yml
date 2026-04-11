@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-payday}
+      POSTGRES_USER: ${POSTGRES_USER:-payday}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-payday_secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-payday}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-payday}:${POSTGRES_PASSWORD:-payday_secret}@postgres:5432/${POSTGRES_DB:-payday}?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET:-payday-prod-secret-change-me}
+      PORT: "8080"
+      UPLOAD_DIR: /app/uploads
+      MAX_UPLOAD_SIZE: "5242880"
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,http://localhost:80}
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "${APP_PORT:-80}:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  uploads:

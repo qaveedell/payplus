@@ -1,0 +1,168 @@
+/* Vazirmatn bundled locally — no Google Fonts (blocked in Iran) */
+
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --primary-light: #818cf8;
+  --primary-bg: #eef2ff;
+  --success: #10b981;
+  --success-bg: #ecfdf5;
+  --danger: #ef4444;
+  --danger-bg: #fef2f2;
+  --warning: #f59e0b;
+  --warning-bg: #fffbeb;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-900: #111827;
+  --sidebar-bg: #1e1b4b;
+  --sidebar-hover: #312e81;
+  --gradient-start: #6366f1;
+  --gradient-end: #8b5cf6;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 40px -5px rgba(0, 0, 0, 0.12);
+  --radius: 12px;
+  --radius-lg: 16px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--gray-50);
+  color: var(--gray-900);
+}
+
+[lang='fa'] body {
+  font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+[lang='ur'] body {
+  font-family: 'Noto Nastaliq Urdu', 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Ant Design overrides for premium feel */
+.ant-btn-primary {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35) !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.ant-btn-primary:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45) !important;
+}
+
+.ant-card {
+  border-radius: var(--radius) !important;
+  border: 1px solid var(--gray-200) !important;
+  box-shadow: var(--shadow-sm) !important;
+  transition: all 0.2s ease !important;
+}
+
+.ant-card:hover {
+  box-shadow: var(--shadow-md) !important;
+}
+
+.ant-table {
+  border-radius: var(--radius) !important;
+  overflow: hidden !important;
+}
+
+.ant-table-thead > tr > th {
+  background: var(--gray-50) !important;
+  font-weight: 600 !important;
+  color: var(--gray-700) !important;
+  border-bottom: 2px solid var(--gray-200) !important;
+  padding: 14px 16px !important;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 14px 16px !important;
+  border-bottom: 1px solid var(--gray-100) !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: var(--primary-bg) !important;
+}
+
+.ant-tag {
+  border-radius: 20px !important;
+  font-weight: 500 !important;
+  padding: 2px 12px !important;
+}
+
+.ant-input, .ant-input-affix-wrapper, .ant-select-selector, .ant-picker {
+  border-radius: 8px !important;
+  border-color: var(--gray-300) !important;
+}
+
+.ant-input:focus, .ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+}
+
+.ant-modal .ant-modal-content {
+  border-radius: var(--radius-lg) !important;
+  overflow: hidden;
+}
+
+.ant-modal .ant-modal-header {
+  border-bottom: 1px solid var(--gray-100) !important;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+}
+
+.ant-tabs-ink-bar {
+  background: var(--primary) !important;
+}
+
+.ant-statistic-content-value {
+  font-weight: 700 !important;
+}
+
+.ant-descriptions-bordered .ant-descriptions-item-label {
+  background: var(--gray-50) !important;
+  font-weight: 500 !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Smooth transitions globally */
+* {
+  transition-property: background-color, border-color, box-shadow;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+}
