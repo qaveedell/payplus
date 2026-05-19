@@ -78,10 +78,11 @@ export default function MessagesPage() {
     setMessageInput('');
   };
 
-  const handleSendMessage = async () => {
-    if (!activeConv || !messageInput.trim()) return;
+  const handleSendMessage = async (fUrl?: string, fType?: string) => {
+    if (!activeConv) return;
+    if (!messageInput.trim() && !fUrl) return;
     try {
-      await apiSendMessage(activeConv.id, messageInput.trim());
+      await apiSendMessage(activeConv.id, messageInput.trim(), fUrl, fType);
       setMessageInput('');
       fetchMessages();
       fetchConversations(); // refresh last_message preview

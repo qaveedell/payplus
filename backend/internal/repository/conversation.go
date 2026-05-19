@@ -210,7 +210,7 @@ func (r *ConversationRepo) GetMessages(ctx context.Context, convID string, limit
 		limit = 50
 	}
 	rows, err := r.db.Query(ctx,
-		`SELECT m.id, m.conversation_id, m.sender_id, u.display_name, m.content, m.created_at
+		`SELECT m.id, m.conversation_id, m.sender_id, u.display_name, m.content, m.file_url, m.file_type, m.created_at
 		 FROM messages m
 		 JOIN users u ON u.id = m.sender_id
 		 WHERE m.conversation_id = $1
@@ -225,7 +225,7 @@ func (r *ConversationRepo) GetMessages(ctx context.Context, convID string, limit
 	var msgs []model.Message
 	for rows.Next() {
 		var m model.Message
-		if err := rows.Scan(&m.ID, &m.ConversationID, &m.SenderID, &m.SenderName, &m.Content, &m.CreatedAt); err != nil {
+		if err := rows.Scan(&m.ID, &m.ConversationID, &m.SenderID, &m.SenderName, &m.Content, &m.FileURL, &m.FileType, &m.CreatedAt); err != nil {
 			return nil, err
 		}
 		msgs = append(msgs, m)
@@ -237,19 +237,27 @@ func (r *ConversationRepo) GetMessages(ctx context.Context, convID string, limit
 }
 
 // SendMessage inserts a message and bumps the conversation's updated_at.
-func (r *ConversationRepo) SendMessage(ctx context.Context, convID, senderID, content string) (*model.Message, error) {
+func (r *ConversationRepo) SendMessage(ctx context.Context, convID, senderID, content, fileURL, fileType string) (*model.Message, error) {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer tx.Rollback(ctx)
 
+	var pFileURL, pFileType *string
+	if fileURL != "" {
+		pFileURL = &fileURL
+	}
+	if fileType != "" {
+		pFileType = &fileType
+	}
+
 	var msg model.Message
 	err = tx.QueryRow(ctx,
-		`INSERT INTO messages (conversation_id, sender_id, content) VALUES ($1, $2, $3)
-		 RETURNING id, conversation_id, sender_id, content, created_at`,
-		convID, senderID, content,
-	).Scan(&msg.ID, &msg.ConversationID, &msg.SenderID, &msg.Content, &msg.CreatedAt)
+		`INSERT INTO messages (conversation_id, sender_id, content, file_url, file_type) VALUES ($1, $2, $3, $4, $5)
+		 RETURNING id, conversation_id, sender_id, content, file_url, file_type, created_at`,
+		convID, senderID, content, pFileURL, pFileType,
+	).Scan(&msg.ID, &msg.ConversationID, &msg.SenderID, &msg.Content, &msg.FileURL, &msg.FileType, &msg.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -342,13 +350,13 @@ func (r *ConversationRepo) getMembers(ctx context.Context, convID string) ([]mod
 func (r *ConversationRepo) getLastMessage(ctx context.Context, convID string) (*model.Message, error) {
 	var m model.Message
 	err := r.db.QueryRow(ctx,
-		`SELECT m.id, m.conversation_id, m.sender_id, u.display_name, m.content, m.created_at
+		`SELECT m.id, m.conversation_id, m.sender_id, u.display_name, m.content, m.file_url, m.file_type, m.created_at
 		 FROM messages m
 		 JOIN users u ON u.id = m.sender_id
 		 WHERE m.conversation_id = $1
 		 ORDER BY m.created_at DESC
 		 LIMIT 1`, convID,
-	).Scan(&m.ID, &m.ConversationID, &m.SenderID, &m.SenderName, &m.Content, &m.CreatedAt)
+	).Scan(&m.ID, &m.ConversationID, &m.SenderID, &m.SenderName, &m.Content, &m.FileURL, &m.FileType, &m.CreatedAt)
 	if err != nil {
 		return nil, err
 	}

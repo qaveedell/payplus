@@ -130,8 +130,8 @@ export const getConversations = () =>
 export const getConversationMessages = (convId: string, limit = 50, offset = 0) =>
   client.get<MessageItem[]>(`/messages/conversations/${convId}/messages`, { params: { limit, offset } });
 
-export const sendMessage = (convId: string, content: string) =>
-  client.post<MessageItem>(`/messages/conversations/${convId}/messages`, { content });
+export const sendMessage = (convId: string, content: string, fileUrl?: string, fileType?: string) =>
+  client.post<MessageItem>(`/messages/conversations/${convId}/messages`, { content, file_url: fileUrl, file_type: fileType });
 
 export const createDM = (recipientId: string) =>
   client.post<Conversation>('/messages/dm', { recipient_id: recipientId });

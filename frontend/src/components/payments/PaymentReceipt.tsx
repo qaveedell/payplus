@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react';
-import { Button, Modal, Space, Typography, Spin, Progress } from 'antd';
-import { CreditCardOutlined, CheckCircleFilled, DownloadOutlined } from '@ant-design/icons';
+import { Button, Modal, Space, Typography, Spin, Progress, message } from 'antd';
+import { CreditCardOutlined, CheckCircleFilled, DownloadOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import type { Payment } from '../../types';
+import { updatePaymentStatus } from '../../api';
 import dayjs from 'dayjs';
 
 const BANK_COLORS: Record<string, { bg: string; text: string }> = {
@@ -44,6 +45,16 @@ function generateTrackingCode() {
   return code;
 }
 
+interface ReceiptData {
+  date: string;
+  time: string;
+  trackingCode: string;
+  amount: number;
+  receiverName: string;
+  receiverAccount: string;
+  bankName: string;
+}
+
 interface Props {
   payment: Payment;
   onComplete: () => void;
@@ -53,15 +64,7 @@ export default function PaymentReceipt({ payment, onComplete }: Props) {
   const { t } = useTranslation();
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [receiptData, setReceiptData] = useState<{
-    date: string;
-    time: string;
-    trackingCode: string;
-    amount: number;
-    receiverName: string;
-    receiverAccount: string;
-    bankName: string;
-  } | null>(null);
+  const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
   const [showReceipt, setShowReceipt] = useState(false);
   const receiptRef = useRef<HTMLDivElement>(null);
 
@@ -79,24 +82,49 @@ export default function PaymentReceipt({ payment, onComplete }: Props) {
       });
     }, 200);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       clearInterval(interval);
       setProgress(100);
 
       const now = dayjs();
-      setReceiptData({
+      const trackingCode = generateTrackingCode();
+      const data: ReceiptData = {
         date: now.format('YYYY/MM/DD'),
         time: now.format('HH:mm'),
-        trackingCode: generateTrackingCode(),
+        trackingCode,
         amount: payment.amount,
         receiverName: payment.name,
         receiverAccount: payment.iban_value,
         bankName: payment.bank_name || 'Unknown Bank',
-      });
+      };
+
+      try {
+        await updatePaymentStatus(payment.id, 'paid', undefined);
+      } catch {
+        // best effort
+      }
+
+      setReceiptData(data);
       setProcessing(false);
       setShowReceipt(true);
-      onComplete();
+      message.success(t('payment.payment_successful'));
+
+      setTimeout(() => onComplete(), 500);
     }, 5000);
+  };
+
+  const showExistingReceipt = () => {
+    const data: ReceiptData = {
+      date: dayjs(payment.updated_at || payment.created_at).format('YYYY/MM/DD'),
+      time: dayjs(payment.updated_at || payment.created_at).format('HH:mm'),
+      trackingCode: payment.reference_number || '—',
+      amount: payment.amount,
+      receiverName: payment.name,
+      receiverAccount: payment.iban_value,
+      bankName: payment.bank_name || 'Unknown Bank',
+    };
+    setReceiptData(data);
+    setShowReceipt(true);
   };
 
   const handleDownload = () => {
@@ -119,7 +147,8 @@ export default function PaymentReceipt({ payment, onComplete }: Props) {
 
   return (
     <>
-      {payment.status === 'unpaid' && !showReceipt && (
+      {/* Pay Now button for unpaid payments */}
+      {payment.status === 'unpaid' && (
         <Button
           type="primary"
           size="large"
@@ -140,6 +169,18 @@ export default function PaymentReceipt({ payment, onComplete }: Props) {
         </Button>
       )}
 
+      {/* View Receipt button for paid payments */}
+      {payment.status === 'paid' && (
+        <Button
+          icon={<FileTextOutlined />}
+          onClick={showExistingReceipt}
+          style={{ borderRadius: 10, fontWeight: 600 }}
+        >
+          {t('payment.view_receipt')}
+        </Button>
+      )}
+
+      {/* Processing modal */}
       {processing && (
         <Modal open closable={false} footer={null} centered width={360}>
           <div style={{ textAlign: 'center', padding: '30px 20px' }}>
@@ -163,6 +204,7 @@ export default function PaymentReceipt({ payment, onComplete }: Props) {
         </Modal>
       )}
 
+      {/* Receipt modal */}
       <Modal
         open={showReceipt}
         onCancel={() => setShowReceipt(false)}
@@ -188,7 +230,6 @@ export default function PaymentReceipt({ payment, onComplete }: Props) {
             maxWidth: 380,
             margin: '0 auto',
           }}>
-            {/* Bank header */}
             <div style={{
               background: bankStyle.bg,
               color: bankStyle.text,
@@ -208,7 +249,6 @@ export default function PaymentReceipt({ payment, onComplete }: Props) {
               <div style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>{t('payment.payment_receipt')}</div>
             </div>
 
-            {/* Success badge */}
             <div style={{ textAlign: 'center', padding: '16px 0 8px' }}>
               <CheckCircleFilled style={{ fontSize: 40, color: '#10b981' }} />
               <div style={{ color: '#10b981', fontWeight: 700, fontSize: 16, marginTop: 8 }}>
@@ -216,7 +256,6 @@ export default function PaymentReceipt({ payment, onComplete }: Props) {
               </div>
             </div>
 
-            {/* Amount */}
             <div style={{ textAlign: 'center', padding: '8px 24px 16px' }}>
               <div style={{ fontSize: 32, fontWeight: 800, color: '#111827', fontVariantNumeric: 'tabular-nums' }}>
                 {formatAmount(receiptData.amount)}
@@ -224,7 +263,6 @@ export default function PaymentReceipt({ payment, onComplete }: Props) {
               <div style={{ fontSize: 13, color: '#6b7280' }}>{t('payment.rials')}</div>
             </div>
 
-            {/* Details */}
             <div style={{ padding: '0 24px 20px' }}>
               {[
                 [t('payment.date'), receiptData.date],
@@ -245,7 +283,6 @@ export default function PaymentReceipt({ payment, onComplete }: Props) {
               ))}
             </div>
 
-            {/* Footer */}
             <div style={{
               background: '#f9fafb', padding: '12px 24px',
               textAlign: 'center', fontSize: 11, color: '#9ca3af',

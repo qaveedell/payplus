@@ -169,12 +169,12 @@ func (h *MessagingHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Content == "" {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "message content is required"})
+	if req.Content == "" && req.FileURL == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "message content or file is required"})
 		return
 	}
 
-	msg, err := h.convRepo.SendMessage(r.Context(), convID, userID, req.Content)
+	msg, err := h.convRepo.SendMessage(r.Context(), convID, userID, req.Content, req.FileURL, req.FileType)
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to send message"})
 		return

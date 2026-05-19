@@ -131,6 +131,8 @@ export interface MessageItem {
   sender_id: string;
   sender_name?: string;
   content: string;
+  file_url?: string | null;
+  file_type?: string | null;
   created_at: string;
 }
 

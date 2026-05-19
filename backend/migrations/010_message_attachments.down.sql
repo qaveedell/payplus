@@ -1,0 +1,2 @@
+ALTER TABLE messages DROP COLUMN IF EXISTS file_url;
+ALTER TABLE messages DROP COLUMN IF EXISTS file_type;

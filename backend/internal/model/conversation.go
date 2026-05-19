@@ -30,6 +30,8 @@ type Message struct {
 	SenderID       string    `json:"sender_id"`
 	SenderName     string    `json:"sender_name,omitempty"`
 	Content        string    `json:"content"`
+	FileURL        *string   `json:"file_url"`
+	FileType       *string   `json:"file_type"`
 	CreatedAt      time.Time `json:"created_at"`
 }
 
@@ -48,5 +50,7 @@ type UpdateGroupRequest struct {
 }
 
 type SendMessageRequest struct {
-	Content string `json:"content"`
+	Content  string `json:"content"`
+	FileURL  string `json:"file_url,omitempty"`
+	FileType string `json:"file_type,omitempty"`
 }

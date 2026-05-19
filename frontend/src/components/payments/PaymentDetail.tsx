@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Descriptions, Tag, Button, Space, Tabs, Upload, message, Image, Divider, Card, Typography, Popconfirm, Alert, Badge } from 'antd';
+import { Descriptions, Tag, Button, Space, Tabs, Upload, message, Image, Divider, Card, Typography, Popconfirm, Alert, Badge, Modal, Form, Input, InputNumber, Select } from 'antd';
 import { ArrowLeftOutlined, UploadOutlined, CheckCircleOutlined, PlusOutlined, PictureOutlined, WarningOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import type { Payment } from '../../types';
-import { getPayment, updatePaymentStatus, confirmPayment, uploadReceipt, createSubPayment, deletePayment } from '../../api';
+import { getPayment, updatePayment, updatePaymentStatus, confirmPayment, uploadReceipt, createSubPayment, deletePayment } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import NotesList from '../notes/NotesList';
 import SubPaymentForm from './SubPaymentForm';
@@ -29,6 +29,8 @@ export default function PaymentDetail() {
   const [payment, setPayment] = useState<Payment | null>(null);
   const [loading, setLoading] = useState(true);
   const [showSubForm, setShowSubForm] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editForm] = Form.useForm();
 
   const fetchPayment = async () => {
     if (!id) return;
@@ -209,7 +211,18 @@ export default function PaymentDetail() {
         )}
         <Button
           icon={<EditOutlined />}
-          onClick={() => navigate(`/payments/${id}/edit`)}
+          onClick={() => {
+            editForm.setFieldsValue({
+              name: payment.name,
+              iban_type: payment.iban_type,
+              iban_value: payment.iban_value,
+              amount: payment.amount,
+              bank_name: payment.bank_name,
+              national_id: payment.national_id,
+              phone: payment.phone,
+            });
+            setEditModalOpen(true);
+          }}
           style={{ borderRadius: 8 }}
         >
           {t('common.edit')}
@@ -268,6 +281,58 @@ export default function PaymentDetail() {
       <PaymentReceipt payment={payment} onComplete={fetchPayment} />
 
       <Tabs items={tabItems} defaultActiveKey="details" />
+
+      {/* Edit Modal */}
+      <Modal
+        title={t('common.edit')}
+        open={editModalOpen}
+        onCancel={() => setEditModalOpen(false)}
+        onOk={() => editForm.submit()}
+        okText={t('common.save')}
+        cancelText={t('common.cancel')}
+      >
+        <Form
+          form={editForm}
+          layout="vertical"
+          onFinish={async (values) => {
+            try {
+              await updatePayment(id!, values);
+              message.success(t('common.success'));
+              setEditModalOpen(false);
+              fetchPayment();
+            } catch {
+              message.error(t('common.error'));
+            }
+          }}
+          style={{ marginTop: 16 }}
+        >
+          <Form.Item name="name" label={t('payment.name')} rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="iban_type" label={t('payment.iban_type')} rules={[{ required: true }]}>
+            <Select>
+              <Select.Option value="sheba">{t('payment.iban_types.sheba')}</Select.Option>
+              <Select.Option value="card">{t('payment.iban_types.card')}</Select.Option>
+              <Select.Option value="account">{t('payment.iban_types.account')}</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="iban_value" label={t('payment.iban_value')} rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="amount" label={t('payment.amount')} rules={[{ required: true }]}>
+            <InputNumber style={{ width: '100%' }} min={1} formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={(v) => v?.replace(/,/g, '') as never} />
+          </Form.Item>
+          <Form.Item name="bank_name" label={t('payment.bank_name')} rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="national_id" label={t('payment.national_id')}>
+            <Input maxLength={10} />
+          </Form.Item>
+          <Form.Item name="phone" label={t('payment.phone')}>
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </Space>
   );
 }
