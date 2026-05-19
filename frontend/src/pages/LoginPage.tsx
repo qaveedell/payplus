@@ -161,9 +161,10 @@ export default function LoginPage() {
             { key: 'en', label: 'English', onClick: () => i18n.changeLanguage('en') },
             { key: 'fa', label: 'فارسی', onClick: () => i18n.changeLanguage('fa') },
             { key: 'ur', label: 'اردو', onClick: () => i18n.changeLanguage('ur') },
+            { key: 'ps', label: 'پښتو', onClick: () => i18n.changeLanguage('ps') },
           ]}}>
             <Button type="text" icon={<GlobalOutlined />} style={{ color: '#6b7280' }}>
-              {{ en: 'English', fa: 'فارسی', ur: 'اردو' }[i18n.language] || 'English'}
+              {{ en: 'English', fa: 'فارسی', ur: 'اردو', ps: 'پښتو' }[i18n.language] || 'English'}
             </Button>
           </Dropdown>
         </div>

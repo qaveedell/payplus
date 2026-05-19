@@ -30,6 +30,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 const fontMap: Record<string, string> = {
   fa: 'Vazirmatn, sans-serif',
   ur: 'Vazirmatn, sans-serif',
+  ps: 'Vazirmatn, sans-serif',
   en: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
 };
 

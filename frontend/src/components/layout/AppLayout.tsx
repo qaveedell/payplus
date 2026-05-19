@@ -107,11 +107,12 @@ export default function AppLayout() {
     ...(user?.role === 'admin' ? [{ key: '/admin', icon: <SettingOutlined />, label: t('nav.admin') }] : []),
   ];
 
-  const languageLabels: Record<string, string> = { en: 'EN', fa: 'FA', ur: 'UR' };
+  const languageLabels: Record<string, string> = { en: 'EN', fa: 'FA', ur: 'UR', ps: 'PS' };
   const languageMenuItems = [
     { key: 'en', label: 'English', onClick: () => i18n.changeLanguage('en') },
     { key: 'fa', label: 'فارسی', onClick: () => i18n.changeLanguage('fa') },
     { key: 'ur', label: 'اردو', onClick: () => i18n.changeLanguage('ur') },
+    { key: 'ps', label: 'پښتو', onClick: () => i18n.changeLanguage('ps') },
   ];
 
   const siderWidth = 240;

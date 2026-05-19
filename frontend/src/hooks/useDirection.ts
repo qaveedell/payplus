@@ -5,12 +5,12 @@ export function useDirection() {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    const rtlLangs = ['fa', 'ur'];
+    const rtlLangs = ['fa', 'ur', 'ps'];
     const dir = rtlLangs.includes(i18n.language) ? 'rtl' : 'ltr';
     document.documentElement.dir = dir;
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
 
-  const rtlLangs = ['fa', 'ur'];
+  const rtlLangs = ['fa', 'ur', 'ps'];
   return rtlLangs.includes(i18n.language) ? 'rtl' : 'ltr';
 }
