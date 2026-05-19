@@ -9,6 +9,7 @@ import { getPayment, updatePaymentStatus, confirmPayment, uploadReceipt, createS
 import { useAuth } from '../../contexts/AuthContext';
 import NotesList from '../notes/NotesList';
 import SubPaymentForm from './SubPaymentForm';
+import PaymentReceipt from './PaymentReceipt';
 
 const statusTagColors: Record<string, string> = {
   unpaid: 'default',
@@ -262,6 +263,9 @@ export default function PaymentDetail() {
           <Divider style={{ margin: '8px 0' }} />
         </>
       )}
+
+      {/* Pay button — demo receipt generator */}
+      <PaymentReceipt payment={payment} onComplete={fetchPayment} />
 
       <Tabs items={tabItems} defaultActiveKey="details" />
     </Space>
