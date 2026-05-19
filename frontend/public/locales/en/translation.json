@@ -91,6 +91,7 @@
       "account": "Account Number",
       "contact": "From Contacts"
     },
+    "delete_confirm": "Are you sure you want to delete this payment?",
     "mark_paid": "Upload Receipt & Mark Paid",
     "mark_problematic": "Mark as Problematic",
     "confirm": "Confirm Payment",

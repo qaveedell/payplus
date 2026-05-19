@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Descriptions, Tag, Button, Space, Tabs, Upload, message, Image, Divider, Card, Typography, Popconfirm, Alert, Badge } from 'antd';
-import { ArrowLeftOutlined, UploadOutlined, CheckCircleOutlined, PlusOutlined, PictureOutlined, WarningOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, UploadOutlined, CheckCircleOutlined, PlusOutlined, PictureOutlined, WarningOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import type { Payment } from '../../types';
-import { getPayment, updatePaymentStatus, confirmPayment, uploadReceipt, createSubPayment } from '../../api';
+import { getPayment, updatePaymentStatus, confirmPayment, uploadReceipt, createSubPayment, deletePayment } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import NotesList from '../notes/NotesList';
 import SubPaymentForm from './SubPaymentForm';
@@ -206,6 +206,30 @@ export default function PaymentDetail() {
         {!hasReceipt && (
           <Tag color="warning" icon={<WarningOutlined />}>No Receipt</Tag>
         )}
+        <Button
+          icon={<EditOutlined />}
+          onClick={() => navigate(`/payments/${id}/edit`)}
+          style={{ borderRadius: 8 }}
+        >
+          {t('common.edit')}
+        </Button>
+        <Popconfirm
+          title={t('payment.delete_confirm')}
+          onConfirm={async () => {
+            try {
+              await deletePayment(id!);
+              message.success(t('common.success'));
+              navigate(-1);
+            } catch {
+              message.error(t('common.error'));
+            }
+          }}
+          okButtonProps={{ danger: true }}
+        >
+          <Button danger icon={<DeleteOutlined />} style={{ borderRadius: 8 }}>
+            {t('common.delete')}
+          </Button>
+        </Popconfirm>
       </Space>
 
       {canManage && (

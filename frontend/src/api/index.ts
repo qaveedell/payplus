@@ -38,6 +38,9 @@ export const createPayment = (data: Partial<Payment>) =>
 export const updatePayment = (id: string, data: Partial<Payment>) =>
   client.put<Payment>(`/payments/${id}`, data);
 
+export const deletePayment = (id: string) =>
+  client.delete(`/payments/${id}`);
+
 export const updatePaymentStatus = (id: string, status: string, receipt_url?: string) =>
   client.patch<Payment>(`/payments/${id}/status`, { status, receipt_url });
 

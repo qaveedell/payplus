@@ -239,6 +239,11 @@ func (r *PaymentRepo) UpdateStatus(ctx context.Context, id string, status string
 	return err
 }
 
+func (r *PaymentRepo) Delete(ctx context.Context, id string) error {
+	_, err := r.db.Exec(ctx, `DELETE FROM payments WHERE id = $1`, id)
+	return err
+}
+
 func (r *PaymentRepo) Confirm(ctx context.Context, id string) error {
 	_, err := r.db.Exec(ctx,
 		`UPDATE payments SET is_confirmed = TRUE, confirmed_at = NOW(), updated_at = NOW() WHERE id = $1`, id)

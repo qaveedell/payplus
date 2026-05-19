@@ -120,6 +120,7 @@ func main() {
 		r.Post("/api/payments", paymentHandler.Create)
 		r.Get("/api/payments/{id}", paymentHandler.GetByID)
 		r.Put("/api/payments/{id}", paymentHandler.Update)
+		r.Delete("/api/payments/{id}", paymentHandler.Delete)
 		r.Patch("/api/payments/{id}/status", paymentHandler.UpdateStatus)
 		r.Patch("/api/payments/{id}/confirm", paymentHandler.Confirm)
 		r.Post("/api/payments/{id}/split", paymentHandler.CreateSplit)

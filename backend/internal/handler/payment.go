@@ -134,6 +134,15 @@ func (h *PaymentHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, payment)
 }
 
+func (h *PaymentHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if err := h.paymentRepo.Delete(r.Context(), id); err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to delete payment"})
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"message": "payment deleted"})
+}
+
 func (h *PaymentHandler) Update(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
