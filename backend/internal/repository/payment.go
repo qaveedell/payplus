@@ -53,7 +53,7 @@ func (r *PaymentRepo) GetByID(ctx context.Context, id string) (*model.Payment, e
 		 WHERE p.id = $1`, id,
 	).Scan(
 		&p.ID, &p.ParentID, &p.Type, &p.Name, &p.IBANType, &p.IBANValue, &p.Amount,
-		&p.ReferenceNumber, &p.NationalID, &p.Phone, &p.Status, &p.IsConfirmed,
+		&p.ReferenceNumber, &p.BankName, &p.NationalID, &p.Phone, &p.Status, &p.IsConfirmed,
 		&p.ConfirmedAt, &p.ReceiptURL, &p.ContactID, &p.CreatedBy, &p.CreatedAt, &p.UpdatedAt,
 		&p.CreatorName,
 	)
